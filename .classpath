@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="tmp"/>
 	<classpathentry kind="src" path="output"/>
+	<classpathentry kind="lib" path="D:/Software/Neo4j CE 2.3.1/bin/neo4j-desktop-2.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

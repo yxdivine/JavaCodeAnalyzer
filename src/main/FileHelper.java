@@ -5,25 +5,30 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class DataParser {
-	public static void main(String[] args){
-		//First reads data from the file extracted from kythe
-		DBHelper.startDB();
-//		FileHelper.prepareFileHandles();
-//		parseDataFromFile(FileHelper.datafile.getPath());
-//		FileHelper.closeFiles();
-		
+public class FileHelper {
+	//日志文件
+//	static File logfile = new File("tmp/log"+System.currentTimeMillis()+".txt");
+	static File logfile = new File("tmp/log.txt");
+	public static FileWriter logWriter;
+	//数据包
+	static File datafile = new File("data/kythe.nq");
+	
+	//初始化
+	public static void prepareFileHandles(){
+		try{
+			logWriter = new FileWriter(logfile);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
-    public static void parseDataFromFile(String fileName) {
-        File file = new File(fileName);
+	//解析数据
+    public static void parseData() {
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
+            reader = new BufferedReader(new FileReader(datafile));
             String curStr = null;
             int line = 1;
             while ((curStr = reader.readLine()) != null) {
@@ -42,5 +47,13 @@ public class DataParser {
             }
         }
     }
-}
 
+	//关闭文件
+	public static void closeFiles() {
+		try {
+			logWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
