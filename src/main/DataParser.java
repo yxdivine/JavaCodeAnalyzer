@@ -12,11 +12,17 @@ import java.util.regex.Pattern;
 public class DataParser {
 	public static void main(String[] args){
 		//First reads data from the file extracted from kythe
-		DBHelper.startDB();
-//		FileHelper.prepareFileHandles();
-//		parseDataFromFile(FileHelper.datafile.getPath());
-//		FileHelper.closeFiles();
 		
+		init();
+		
+		parseDataFromFile(FileHelper.datafile.getPath());
+		FileHelper.closeFiles();
+		
+	}
+	
+	private static void init(){
+		DBHelper.startDB();
+		FileHelper.prepareFileHandles();
 	}
 	
     public static void parseDataFromFile(String fileName) {

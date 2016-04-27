@@ -68,11 +68,10 @@ public class KytheEntry {
 		case "node/kind": {
 			if (data.equals("name")) {// ?好像是函数的参数列表
 				// A name identifies zero or more nodes.
-				FileHelper.logWriter.append(file + "\n");
-			} else if (data.equals("file")) {//文件路径
-//				System.out.println(file);
+			} else if (data.equals("file")) {// 文件路径
+				// System.out.println(file);
 			} else if (data.equals("anchor")) {
-				//An anchor connects concrete syntax to abstract syntax.
+				// An anchor connects concrete syntax to abstract syntax.
 			} else if (data.equals("tapp")) {
 			} else if (data.equals("callable")) {
 			} else if (data.equals("function")) {
@@ -83,6 +82,7 @@ public class KytheEntry {
 			} else if (data.equals("record")) {
 			} else if (data.equals("interface")) {
 				TmpStorage.interfaces.add(file);
+				TmpStorage.id_typeMap.put(file, "interface");
 			} else if (data.equals("package")) {
 			} else if (data.equals("constant")) {
 			} else if (data.equals("sum")) {
@@ -102,8 +102,12 @@ public class KytheEntry {
 			// ???
 			break;
 		}
-		case "subkind": {
+		case "subkind": {// 语言特性
 			// ???
+			if (data.equals("class")) {// 类！重要的
+				TmpStorage.id_typeMap.put(file, "class");
+			}
+
 			break;
 		}
 		case "text/encoding": {
@@ -150,6 +154,17 @@ public class KytheEntry {
 		}
 		case "edge/named": {// 重要
 			// A named B if B identifies A
+			if (TmpStorage.id_typeMap.containsKey(file)) {
+				if (TmpStorage.id_typeMap.get(file).equals("interface")) {
+					// System.out.println("interface:"+ entry);
+					String realName = data
+							.replaceAll("kythe:\\?lang=java#", "");
+				} else if (TmpStorage.id_typeMap.get(file).equals("class")) {
+					String realName = data
+							.replaceAll("kythe:\\?lang=java#", "");
+					FileHelper.logWriter.append(file + "\t" + realName + "\n");
+				}
+			}
 			break;
 		}
 		case "edge/overrides": {// /////看起来很重要！
@@ -213,22 +228,19 @@ public class KytheEntry {
 		return this.entry;
 	}
 
+	public static final Pattern htmlCode = Pattern
+			.compile("%([A-F2-7][A-F0-9])");
+
 	public static String replaceHTMLCode(String str) {
-		String tmp = str;
-		tmp = tmp.replaceAll("%20", " ");
-		tmp = tmp.replaceAll("%21", "!");
-		tmp = tmp.replaceAll("%23", "#");
-//		tmp = tmp.replaceAll("%24", "$");
-		tmp = tmp.replaceAll("%28", "(");
-		tmp = tmp.replaceAll("%29", ")");
-		tmp = tmp.replaceAll("%2C", ",");
-		tmp = tmp.replaceAll("%3C", "<");
-		tmp = tmp.replaceAll("%3E", ">");
-		tmp = tmp.replaceAll("%3F", "?");
-		tmp = tmp.replaceAll("%5B", "[");
-		tmp = tmp.replaceAll("%5D", "]");
-		tmp = tmp.replaceAll("%7B", "{");
-		tmp = tmp.replaceAll("%7D", "}");
+		// 被正则占用的符号
+		String tmp = str.replaceAll("%24", Matcher.quoteReplacement("$"))
+				.replaceAll("%5C", Matcher.quoteReplacement("\\"));
+		Matcher m = htmlCode.matcher(tmp);
+		while (m.find()) {
+			String s = m.group(1);
+			tmp = tmp
+					.replaceAll("%" + s, ((char) Integer.parseInt(s, 16)) + "");
+		}
 		return tmp;
 	}
 }
