@@ -15,7 +15,7 @@ public class DataParser {
 		
 		init();
 		
-		parseDataFromFile(FileHelper.datafile.getPath());
+		FileHelper.parseDataByBlock();
 		FileHelper.closeFiles();
 		
 	}
@@ -25,28 +25,5 @@ public class DataParser {
 		FileHelper.prepareFileHandles();
 	}
 	
-    public static void parseDataFromFile(String fileName) {
-        File file = new File(fileName);
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            String curStr = null;
-            int line = 1;
-            while ((curStr = reader.readLine()) != null) {
-	                KytheEntry kentry = new KytheEntry(curStr);
-            }
-            System.out.println("Reading File Finished");
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e1) {
-                }
-            }
-        }
-    }
 }
 
