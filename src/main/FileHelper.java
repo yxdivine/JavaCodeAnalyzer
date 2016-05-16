@@ -16,15 +16,15 @@ public class FileHelper {
 	// static File logfile = new
 	// File("tmp/log"+System.currentTimeMillis()+".txt");
 	static File logfile = new File("tmp/log.txt");
-	static File interfacelog = new File("tmp/interfaces.txt");
-	static File classlog = new File("tmp/classes.txt");
-	static File packagelog = new File("tmp/packages.txt");
-	static File functionlog = new File("tmp/functions.txt");
+	// static File interfacelog = new File("tmp/interfaces.txt");
+	// static File classlog = new File("tmp/classes.txt");
+	// static File packagelog = new File("tmp/packages.txt");
+	// static File functionlog = new File("tmp/functions.txt");
 	public static FileWriter logWriter;
-	public static FileWriter interfaceWriter;
-	public static FileWriter classWriter;
-	public static FileWriter packageWriter;
-	public static FileWriter functionWriter;
+	// public static FileWriter interfaceWriter;
+	// public static FileWriter classWriter;
+	// public static FileWriter packageWriter;
+	// public static FileWriter functionWriter;
 	// 数据包
 	static File datafile = new File("data/tomcatjdbc.nq");
 
@@ -32,39 +32,17 @@ public class FileHelper {
 	public static void prepareFileHandles() {
 		try {
 			logWriter = new FileWriter(logfile);
-			interfaceWriter = new FileWriter(interfacelog);
-			classWriter = new FileWriter(classlog);
-			packageWriter = new FileWriter(packagelog);
-			functionWriter = new FileWriter(functionlog);
+			// interfaceWriter = new FileWriter(interfacelog);
+			// classWriter = new FileWriter(classlog);
+			// packageWriter = new FileWriter(packagelog);
+			// functionWriter = new FileWriter(functionlog);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	// 解析数据
-	@Deprecated
-	public static void parseData() {
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(datafile));
-			String curStr = null;
-			while ((curStr = reader.readLine()) != null) {
-				KytheEntry kentry = new KytheEntry(curStr);
-			}
-			System.out.println("Reading File Finished");
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e1) {
-				}
-			}
-		}
-	}
+
 
 	static String kep = "^\"(.*?)\" \"/kythe/(.*?)\" \"(.*?)\" .$";
 	static Pattern kytheEntryPattern = Pattern.compile(kep);
@@ -73,7 +51,7 @@ public class FileHelper {
 
 	// 改进版数据解析
 	public static void parseDataByBlock() {
-		// 因为原kythe数据是key-value型,将同一个Node的数据全部从文件读取再一起处理比原来的一条一条处理要好一些
+		// 因为原kythe数据是key-value型,将同一个Node的数据全部从文件读取再一起处理比原来的一条一条处理可能要好一些
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(datafile));
@@ -99,12 +77,14 @@ public class FileHelper {
 					} else {
 						// TODO entry 数据读取完毕，处理后扔进graph db
 						// System.out.println(entry.get("entryid")+"\t"+entry.size());
-						FullKytheEntry e = new FullKytheEntry(entry);
+						EntryParser.parseEntry(entry);
 						
 						// 切换entry
 						entry = new HashMap<String, Vector<String>>();
 						entry.put("entryid", new Vector<String>());
 						entry.get("entryid").add(idstr);
+						entry.put("srcid", new Vector<String>());
+						entry.get("srcid").add(m.group(1));
 						entry.put(m.group(2), new Vector<String>());
 						entry.get(m.group(2)).add(m.group(3));
 					}
@@ -114,7 +94,7 @@ public class FileHelper {
 					System.out
 							.println("err! Input does not match kythe entry format.");
 				}
-
+				
 			}
 			System.out.println("Reading File Finished");
 			reader.close();
@@ -152,10 +132,10 @@ public class FileHelper {
 	public static void closeFiles() {
 		try {
 			logWriter.close();
-			classWriter.close();
-			packageWriter.close();
-			interfaceWriter.close();
-			functionWriter.close();
+			// classWriter.close();
+			// packageWriter.close();
+			// interfaceWriter.close();
+			// functionWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

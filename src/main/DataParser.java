@@ -9,6 +9,7 @@ public class DataParser {
 		FileHelper.parseDataByBlock();
 		FileHelper.closeFiles();
 		
+		DBHelper.clean();
 	}
 	
 	private static void init(){
